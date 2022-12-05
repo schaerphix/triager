@@ -1,6 +1,7 @@
 # triager
 Triager is a GUI application to sort pictures
 
+
 Use
 - open pictures with "Pictures"
 - select the destination folders with "new folder" or "select folder"
