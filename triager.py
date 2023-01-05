@@ -5,35 +5,30 @@
 # **********************************************************************
 #
 #  Autor:    schaerphix
-#  Date:     06.10.2021
-#  Revision: V1.2
+#  Date:     05.01.2023
+#  Revision: V1.3
 #
 #  LICENSE:  GNU General Public License v3.0  
 #
 
-
 #   ********************************************************************
 #                           Import
 #   ********************************************************************
-
 from tkinter import *
 import shutil
 from tkinter import filedialog as fd
 import os
 from PIL import ImageTk, Image
 
-
 #   ********************************************************************
 #                           Classes
 #   ********************************************************************
-
 class GUI:
     """
     Erstellt die GUI Klasse
     """
-
     def __init__(self):
-        self.version = 'V1.1'
+        self.version = 'V1.3'
         self.wid = Tk()
         self.selectFiles = None
         self.actPicNo = 0
@@ -86,7 +81,7 @@ class GUI:
 
         self.height_A = 100
         self.height_B = 50
-        self.height_C = self.screen_h - (2 * self.height_B) - 5
+        self.height_C = self.screen_h - (2 * self.height_B) - 20
 
     def CreatWin(self, tit):
         self.wid.geometry(str(self.screen_w)+'x'+str(self.screen_h))
@@ -123,7 +118,6 @@ class GUI:
                                 font=(self.teFon, self.teFonSiz, self.teFonSty))
         self.labActulaPic.place(x=150, y=15)
         
-        
         self.panel = Label(self.pictureFrame, image=self.img,background=self.white)
         self.panel.place(x=0, y=0)
 
@@ -133,32 +127,32 @@ class GUI:
 
         self.NewFolBUT = Button(self.setupFrame, background=self.gray, relief = "flat", width=self.buttonWidth, text="new folder")
         self.NewFolBUT["command"] = self.CreatNewFolder
-        self.NewFolBUT.place(x=self.width_B + 20, y=10)
+        self.NewFolBUT.place(x=self.width_B + 5, y=10)
 
         self.setupBUT = Button(self.setupFrame, background=self.gray, relief = "flat", width=self.buttonWidth, text="select folder")
         self.setupBUT["command"] = self.OpenFolderPath
-        self.setupBUT.place(x=self.width_B + (self.width_C/2) + 20, y=10)
+        self.setupBUT.place(x=self.width_B + (self.width_C/2) + 5, y=10)
 
         self.mirorBUT = Button(self.selectFrame, background=self.yellow, relief = "flat", width=self.buttonWidth, text="180°")
         self.mirorBUT["command"] = self.Miror
-        self.mirorBUT.place(x=(self.width_C/3.3) , y=self.height_C - 150)
+        self.mirorBUT.place(x=(self.width_C/3.3) - 15 , y=self.height_C - 150)
 
         self.rotLeftBUT = Button(self.selectFrame, background=self.yellow, relief = "flat", width=self.buttonWidth, text="turn left")
         self.rotLeftBUT["command"] = self.RotationLeft
-        self.rotLeftBUT.place(x=20, y=self.height_C - 100)
+        self.rotLeftBUT.place(x=2, y=self.height_C - 100)
 
         self.rotRightBUT = Button(self.selectFrame, background=self.yellow, relief = "flat", width=self.buttonWidth, text="turn right")
         self.rotRightBUT["command"] = self.RotationRight
-        self.rotRightBUT.place(x=(self.width_C/2) + 20, y=self.height_C - 100)
+        self.rotRightBUT.place(x=(self.width_C/2) + 3, y=self.height_C - 100)
 
         self.picBackBUT = Button(self.selectFrame, background=self.yellow, relief = "flat", width=self.buttonWidth, text="<")
         self.picBackBUT["command"] = self.PrePic
-        self.picBackBUT.place(x=20, y=self.height_C - 50)
+        self.picBackBUT.place(x=2, y=self.height_C - 50)
 
         self.picNextBUT = Button(self.selectFrame, background=self.yellow, relief = "flat", width=self.buttonWidth, text=">")
         self.picNextBUT["command"] = self.NextPic
-        self.picNextBUT.place(x=(self.width_C/2) + 20, y=self.height_C - 50)
-
+        self.picNextBUT.place(x=(self.width_C/2) + 3, y=self.height_C - 50)
+        
         return self.wid
 
     def CreatNewFolder(self):
@@ -188,7 +182,6 @@ class GUI:
         newFoOKBut.place(x=180, y=150)
 
         self.newFoldWin = self.widN
-
 
     def OpenFile(self):
         self.selectFiles = fd.askopenfilenames(title="open files")
@@ -232,7 +225,6 @@ class GUI:
         self.CreatButtons()
         self.inFolderCheck(self.selectFiles[self.actPicNo].split('/')[len(self.selectFiles[self.actPicNo].split('/'))-1])
 
-
     def NextPic(self):
         if not self.selectFiles == None:
             self.actPicNo += 1
@@ -242,7 +234,6 @@ class GUI:
                 self.actPicNo = len(self.selectFiles)
             else:
                 self.OpenPic()
-
 
     def PrePic(self):
         if not self.selectFiles == None:
@@ -254,27 +245,27 @@ class GUI:
             else:
                 self.OpenPic()
 
-
     def RotationLeft(self):
         if self.img:
             rotPic = self.tempPic.rotate(90)
             self.ShowPic(rotPic)
-
 
     def RotationRight(self):
         if self.img:
             rotPic = self.tempPic.rotate(270)
             self.ShowPic(rotPic)
 
-
     def Miror(self):
         if self.img:
             rotPic = self.tempPic.rotate(180)
             self.ShowPic(rotPic)
 
-
     def CopyToFolder(self, path):
-        shutil.copy(self.selectFiles[self.actPicNo],path)
+        if self.findfile(self.selectFiles[self.actPicNo].split('/')[len(self.selectFiles[self.actPicNo].split('/'))-1],path) != None:
+            os.remove( path + '/' + self.selectFiles[self.actPicNo].split('/')[len(self.selectFiles[self.actPicNo].split('/'))-1])
+            self.findfile(self.selectFiles[self.actPicNo].split('/')[len(self.selectFiles[self.actPicNo].split('/'))-1],path)
+        else:
+            shutil.copy(self.selectFiles[self.actPicNo],path)
         self.inFolderCheck(self.selectFiles[self.actPicNo].split('/')[len(self.selectFiles[self.actPicNo].split('/'))-1])
 
     def CreatButtons(self):
@@ -284,9 +275,8 @@ class GUI:
         self.button_list = []
         for n in self.folderList:
             text = self.GetFolderName(n)
-            self.button_list.append(self.CreatFolderButton(self.selectFrame, n, text, (self.width_C/3.3), self.actYpos))
+            self.button_list.append(self.CreatFolderButton(self.selectFrame, n, text, (self.width_C/3.3)-15, self.actYpos))
             self.actYpos = self.actYpos + self.deltaY + self.butHeight
-
 
     def CreatFolderButton(self, rot, path, tex, px, py):
         but = Button(rot, background=self.orange, width=self.buttonWidth, text=tex)
@@ -310,31 +300,27 @@ class GUI:
 
     def inFolderCheck(self,pic):
         for i in range(len(self.button_list)):
-            result = self.findfile(pic,self.folderList[i])#os.path.join(self.folderList[i], pic)
+            result = self.findfile(pic,self.folderList[i])
             if result != None:
                 self.button_list[i]['background'] = self.green
             else:
                 self.button_list[i]['background'] = self.orange
      
     def findfile(self,name, path):
-        for dirpath, dirname, filename in os.walk(path):
-            if name in filename:
-                return os.path.join(dirpath, name)       
+        if name in os.listdir(path):
+            return os.path.join(path, name)
+      
 
 #   ********************************************************************
 #                           MAIN
 #   ********************************************************************
-
-def main(args):
+def main():
     gui = GUI()
     width, height = gui.GetScreenResolution()
     gui = gui.CreatWin("Triager "+ gui.version)
     gui.mainloop()
-
     return 0
-
 
 if __name__ == '__main__':
     import sys
-
-    sys.exit(main(sys.argv))
+    main()
